@@ -1,0 +1,144 @@
+﻿   @model IEnumerable<Umbraco.Cms.Core.Models.PublishedContent.IPublishedContent>
+@{
+	var categoryId = Context.Request.Query["ItemCategory"].FirstOrDefault();
+}
+
+
+<div class="section">
+
+
+	<!-- container -->
+	<div class="container">
+		<!-- row -->
+		<div class="row">
+
+			<!-- section title -->
+			<div class="col-md-12">
+				<div class="section-title">
+
+					@{
+						int s = 0;
+
+						@foreach (var x1 in Model)
+						{
+							foreach (var y1 in x1.Children.Where(v => v.Name == categoryId))
+							{
+
+								foreach (var c1 in y1.Children)
+								{
+									s = s + 1;
+								}
+							}
+						}
+
+					}
+
+					<h3 class="title">@categoryId (@s)</h3>
+					@* 	<div class="section-nav">
+						<ul class="section-tab-nav tab-nav">
+							<li class="active"><a data-toggle="tab" href="#tab2">Laptops</a></li>
+							<li><a data-toggle="tab" href="#tab2">Smartphones</a></li>
+							<li><a data-toggle="tab" href="#tab2">Cameras</a></li>
+							<li><a data-toggle="tab" href="#tab2">Accessories</a></li>
+						</ul>
+					</div> *@
+				</div>
+			</div>
+			<!-- /section title -->
+			<!-- Products tab & slick -->
+			<div class="col-md-12">
+	<div class="row">
+		<div class="products-tabs">
+			<!-- tab -->
+			<div id="tab2" class="tab-pane fade in active">
+				<div class="products-slick" data-nav="#slick-nav-2">
+
+					@foreach (var x in Model)
+					{
+						foreach (var y in x.Children.Where(v => v.Name == categoryId))
+						{
+							foreach (var c in y.Children)
+							{
+								s = s + 1;
+								double discount = 0;
+								int initialPrice = 0;
+								int currentPrice = 0;
+
+								if (c.Value("initialPrice") != null)
+								{
+									initialPrice = c.Value<int>("initialPrice");
+									currentPrice = c.Value<int>("actualPrice");
+
+									if (initialPrice > 0)
+									{
+										discount = ((double)(initialPrice - currentPrice) / initialPrice) * 100;
+									}
+								}
+								else
+								{
+									initialPrice = c.Value<int>("initialPriceOther");
+									currentPrice = c.Value<int>("actualPriceOther");
+
+									if (initialPrice > 0)
+									{
+										discount = ((double)(initialPrice - currentPrice) / initialPrice) * 100;
+									}
+								}
+
+								var images = c.Value<IEnumerable<Umbraco.Cms.Core.Models.MediaWithCrops>>("selectItemImages");
+								var firstImage = images?.FirstOrDefault();
+								
+								<div class="product">
+									<div class="product-img">
+										<img src="@firstImage?.Url()" alt="">
+										<div class="product-label">
+											@if (discount > 0)
+											{
+												<span class="sale">-@Math.Round(discount, 0)%</span>
+											}
+
+											@if (c.Value<Boolean>("markAsTopSelling"))
+											{
+												<span class="new">NEW</span>
+											}
+										</div>
+									</div>
+									<div class="product-body">
+										<p class="product-category">@y.Name</p>
+										<h3 class="product-name"><a href="#">@c.Name</a></h3>
+										<h4 class="product-price">@currentPrice.00 <del class="product-old-price">@initialPrice.00</del></h4>
+									</div>
+
+									<div class="add-to-cart">
+										<button class="add-to-cart-btn"><i class="fab fa-whatsapp"></i> &nbsp; Order Now</button>
+									</div>
+
+									<div class="add-to-cart">
+	<a class="add-to-cart-btn"
+	   target="_blank"
+	   href="https://wa.me/?text=@Uri.EscapeDataString($"Hello, I am interested in this item:\n\nName: {c.Name}\nCategory: {y.Name}\nPrice: {currentPrice}.00 KES\nDiscount: {Math.Round(discount, 0)}%")">
+		<i class="fab fa-whatsapp"></i> &nbsp; Order Now
+	</a>
+</div>
+								</div>
+							}
+						}
+					}
+					<!-- product -->
+				
+					<!-- /product -->
+					
+				</div>
+				<div id="slick-nav-2" class="products-slick-nav"></div>
+			</div>
+			<!-- /tab -->
+		</div>
+	</div>
+</div>
+
+			<!-- /Products tab & slick -->
+		</div>
+		<!-- /row -->
+	</div>
+	<!-- /container -->
+</div>

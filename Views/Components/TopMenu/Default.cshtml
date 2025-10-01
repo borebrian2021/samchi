@@ -1,0 +1,28 @@
+﻿@model IEnumerable<Umbraco.Cms.Core.Models.PublishedContent.IPublishedContent>
+@{
+	var activeCategory = Context.Request.Query["ItemCategory"].ToString();
+}
+@{
+		  }
+
+<nav id="navigation">
+	<div class="container">
+		<div id="responsive-nav">
+	
+			<ul class="main-nav nav navbar-nav">
+				@foreach (var x in Model)
+				{
+					foreach (var y in x.Children)
+					{
+						var isActive = activeCategory == y.Name ? "active" : "";
+						<li class="@isActive">
+							<a href="/items-per-category?ItemCategory=@Uri.EscapeDataString(y.Name)">
+								@y.Name
+							</a>
+						</li>
+					}
+				}
+			</ul>
+		</div>
+	</div>
+</nav>

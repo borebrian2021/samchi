@@ -1,0 +1,21 @@
+﻿@using Umbraco.Cms.Web.Common.PublishedModels;
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@{
+	Layout = "master.cshtml";
+}
+
+@{
+	var categoryName = Context.Request.Query["ItemCategory"].FirstOrDefault();
+}
+@await Component.InvokeAsync("ItemsPerCategory", new { categoryName = categoryName })
+
+<!-- /SECTION -->
+
+<!-- /HOT DEAL SECTION -->
+<!-- SECTION -->
+
+<!-- /SECTION -->
+<!-- SECTION -->
+
+<!-- /SECTION -->
+<!-- NEWSLETTER -->

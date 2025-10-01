@@ -1,5 +1,87 @@
 ﻿@using Umbraco.Cms.Web.Common.PublishedModels;
-@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@using Umbraco.Extensions
+@using Umbraco.Cms.Core.Models.Blocks
+
+@using Clean.Core.Models.ViewModels
+@using ContentModels = Umbraco.Cms.Web.Common.PublishedModels
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<ContentModels.ItemsGroups>
+
 @{
 	Layout = "master.cshtml";
+	var homePage = Umbraco.ContentAtRoot().FirstOrDefault(x => x.ContentType.Alias == "itemsGroups");
 }
+<div id="hot-deal" class="section">
+	<!-- container -->
+	<div class="container">
+		<!-- row -->
+
+		@{
+			if (homePage.Value<bool>("bannerVisible"))
+			{
+				<div class="row">
+					<div class="col-md-3 ">
+						<div style="display:flex;justify-content:center">
+
+							@{
+								var image1 = homePage?.Value<IPublishedContent>("firstImage");
+								var image2 = homePage?.Value<IPublishedContent>("secondImage");
+							}
+							<img src="@image1.Url()" class="image-sides" />
+						</div>
+					</div>
+
+					<div class="col-md-6">
+						<div class="hot-deal">
+							<ul class="hot-deal-countdown">
+
+								<li>
+									<div>
+										<h3>@Model.Days</h3>
+										<span>Days</span>
+									</div>
+								</li>
+
+								<li>
+									<div>
+										<h3>@Model.Hours</h3>
+										<span>Hours</span>
+									</div>
+								</li>
+
+								<li>
+
+									<div>
+										<h3>@Model.Minutes</h3>
+										<span>Mins</span>
+									</div>
+								</li>
+
+								<li>
+									<div>
+										<h3>@Model.Seconds</h3>
+										<span>Secs</span>
+									</div>
+								</li>
+							</ul>
+							<h2 class="text-uppercase">@Model.UpperText </h2>
+							<p>@Model.LowerText</p>
+							<a class="primary-btn cta-btn" href="#">@Model.ButtonText</a>
+						</div>
+					</div>
+					<div class="col-md-3 ">
+						<div style="display:flex;justify-content:center">
+
+							<img src="@image2.Url()" class="image-sides" />
+						</div>
+					</div>
+				</div>
+			}
+		}
+	
+		<!-- /row -->
+	</div>
+	<!-- /container -->
+</div>
+@await Component.InvokeAsync("ItemGroups")
+@await Component.InvokeAsync("AllItems")
+

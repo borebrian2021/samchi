@@ -1,0 +1,38 @@
+﻿   @model IEnumerable<Umbraco.Cms.Core.Models.PublishedContent.IPublishedContent>
+
+<div class="section">
+    <!-- container -->
+    <div class="container">
+        <!-- row -->
+        <div class="row">
+            <!-- shop -->
+            @foreach (var item in Model)
+
+            {  @foreach (var item2 in item.Children)
+
+            {
+                    var image = item2.Value<IPublishedContent>("categoryIMage");
+             
+                <div class="col-md-2 col-xs-6">
+                    <div class="shop1">
+                        <div class="shop-img">
+                                <img src="@image.Url()" class="small-image" alt="">
+                        </div>
+                        <div class="shop-body ">
+                            <h4 class="text-white"> @item2.Name<br> Collection</h4>
+                                <a href="/items-per-category?ItemCategory=@Uri.EscapeDataString(@item2.Name)" class="cta-btn text-white">
+                                Shop now <i class="fa fa-arrow-circle-right"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+
+            }}
+
+
+
+        </div>
+        <!-- /container -->
+    </div>
+</div>
