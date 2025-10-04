@@ -3,7 +3,9 @@
 
 @using Clean.Core.Models.ViewModels
 @using ContentModels = Umbraco.Cms.Web.Common.PublishedModels
-
+@using Microsoft.AspNetCore.Identity
+@using Umbraco.Cms.Core.Security
+@inject SignInManager<BackOfficeIdentityUser> BackOfficeSignInManager
 @{
     Layout =null;
 }
@@ -26,6 +28,21 @@
 <link type="text/css" rel="stylesheet" href="/css/style.css" />
 
 <!-- CSS -->
+@* @using Microsoft.AspNetCore.Identity
+@using Umbraco.Cms.Core.Security
+@inject SignInManager<BackOfficeIdentityUser> BackOfficeSignInManager
+
+@{
+    if (!BackOfficeSignInManager.IsSignedIn(User))
+    {
+        <h3>Unauthorized: Please log in via the backoffice.</h3>
+        return;
+    }
+}
+ *@
+<h2>Welcome backoffice user: @User.Identity?.Name</h2>
+<p>This page is only visible to authenticated backoffice users.</p>
+<p>This page is restricted to Umbraco backoffice users only.</p>
 <body class="">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
     <div class="container-fluid">
@@ -135,6 +152,10 @@
         </div>
     </div>
 </body>
+    }
+}
+
+<
 <script src="/js/jquery.min.js"></script>
 <script src="/js/bootstrap.min.js"></script>
 <script src="/js/slick.min.js"></script>

@@ -1,0 +1,77 @@
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@inject Umbraco.Cms.Web.Common.UmbracoHelper Umbraco
+@inject Umbraco.Cms.Web.Common.UmbracoHelper Umbraco
+@inject Umbraco.Cms.Web.Common.UmbracoHelper Umbraco
+
+
+@{
+    Layout = "master.cshtml";
+
+}
+
+<div class="row">
+    <div class="col-md-4">
+
+    </div>  
+    
+    <div class="col-md-4">
+<div id="map" style="width:100%; height:500px;"></div>
+    </div>
+
+</div>
+
+
+@{
+    // Assuming "locations" is a parent node with children "Location"
+    var  locations = Umbraco.ContentAtRoot().FirstOrDefault(x => x.ContentType.Alias == "maps");
+    int x = 0;
+}
+
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDSpvilsgxA3A7nAhAvPhNyW_tsDuHtMPM&callback=initMap">
+
+
+</script>
+
+<script>
+    var locations = [
+    @foreach (var loc in locations.Children)
+    {
+
+        x = x + 1;
+        
+    
+    
+
+    var name = loc.Value("county");
+        var lat = loc.Value<double>("latitude");
+        var lng = loc.Value<double>("longitude");
+
+        <text>{ name: "@name", lat: @lat, lng: @lng },</text>
+    }
+    ];
+    function initMap() {
+         var kenyaBounds = {
+      north: 5.0199,
+      south: -4.6775,
+      west: 33.9098,
+      east: 41.8990
+         }
+        var map = new google.maps.Map(document.getElementById("map"), {
+            center: { lat: -1.3407, lng: 36.7180 },
+    zoom: 6,
+    restriction: {
+      latLngBounds: kenyaBounds,
+      strictBounds: true
+    } // center on first
+        });
+
+        locations.forEach(function(loc) {
+            new google.maps.Marker({
+                position: { lat: loc.lat, lng: loc.lng },
+                map: map,
+                title: loc.name
+            });
+        });
+    }
+</script>
+<p>@x</p>

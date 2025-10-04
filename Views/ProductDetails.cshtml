@@ -1,0 +1,309 @@
+﻿@using Umbraco.Cms.Web.Common.PublishedModels;
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@inject Umbraco.Cms.Web.Common.UmbracoHelper Umbraco
+@using Umbraco.Cms.Web.Common.PublishedModels;
+@inject Umbraco.Cms.Web.Common.UmbracoHelper Umbraco
+@{
+
+	@using System.Text.RegularExpressions
+
+	Layout = null;
+}
+@{
+
+	// Get the root node with alias "home"
+	var homePage = Umbraco.ContentAtRoot().FirstOrDefault(x => x.ContentType.Alias == "home");
+
+	var categores = Umbraco.ContentAtRoot().FirstOrDefault(x => x.ContentType.Alias == "itemsDetailEach");
+
+
+	var categoryName = Context.Request.Query["Id"].FirstOrDefault();
+	var item = Umbraco.Content(categoryName);
+
+
+}
+
+
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<!------ Include the above in your HEAD tag ---------->
+
+<link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800&display=swap" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css">
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css">
+@* <link type="text/css" rel="stylesheet" href="/css/slick-theme.css" /> *@
+<!-- nouislider -->
+<link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,700" rel="stylesheet" asp-append-version="true">
+
+<!-- Bootstrap -->
+<link type="text/css" rel="stylesheet" href="/css/bootstrap.min.css" asp-append-version="true" />
+<!-- Slick -->
+<link type="text/css" rel="stylesheet" href="/css/slick.css" asp-append-version="true" />
+<link type="text/css" rel="stylesheet" href="/css/slick-theme.css" asp-append-version="true" />
+<!-- nouislider -->
+<link type="text/css" rel="stylesheet" href="/css/nouislider.min.css" asp-append-version="true" />
+<!-- Font Awesome Icon -->
+<link rel="stylesheet" href="/css/font-awesome.min.css" asp-append-version="true">
+<!-- Custom stlylesheet -->
+<link type="text/css" rel="stylesheet" href="/css/style.css" asp-append-version="true" />
+<link href="~/assets/css/product-details.css" rel="stylesheet" asp-append-version="true" />
+
+
+<body>
+	<header>
+		<!-- TOP HEADER -->
+		<div id="top-header">
+			<div class="container">
+				<ul class="header-links pull-left">
+					<li><a href="tel:@homePage.Value("whatsAppNumber")"><i class="fa fa-phone"></i> @homePage.Value("whatsAppNumber")</a></li>
+					<li><a href="mailto:@homePage.Value("emailAddress")"><i class="fa fa-envelope"></i> @homePage.Value("emailAddress")</a></li>
+					<li><a href="#"><i class="fa fa-map-marker"></i> @homePage.Value("location")</a></li>
+				</ul>
+				@* <ul class="header-links pull-right">
+					<li><a href="#"><i class="fa fa-dollar"></i> USD</a></li>
+					<li><a href="#"><i class="fa fa-user-o"></i> My Account</a></li>
+				</ul> *@
+			</div>
+		</div>
+		<!-- /TOP HEADER -->
+		<!-- MAIN HEADER -->
+		<div id="header">
+			<!-- container -->
+			<div class="container">
+				<!-- row -->
+				<div class="row">
+					<!-- LOGO -->
+					<div class="col-md-3">
+						<div class="header-logo">
+							<a href="#" class="logo">
+								@{
+
+
+
+									var logo = homePage?.Value<IPublishedContent>("logo");
+								}
+								("logo");
+								<img src="@logo.Url()" alt="" style="height:50px">
+							</a>
+						</div>
+					</div>
+
+					<!-- /LOGO -->
+					<!-- SEARCH BAR -->
+					<div class="col-md-6">
+						<div class="header-search width-search">
+
+
+
+							<form class="bxq-search-92 d-flex align-items-stretch">
+								<select class="bxq-select-92 border-0 rounded-start " style="border:none;height:40px;">
+									<option value="" selected="">Select Category</option>
+									<option value="All">
+										All items
+									</option>
+									@{
+										<option value="0">All Categories</option>
+
+										foreach (var x in categores.Children)
+										{
+											<option value="1">@x.Name</option>
+										}
+
+									}
+								</select>
+
+								<input type="text" class="bxq-input-92 border-0" style="border:none;height:40px;" placeholder="Search here">
+
+								<button type="submit" class="bxq-btn-92 fw-bold" style="border:none;height:40px;">
+									Search
+								</button>
+							</form>
+						</div>
+
+					</div>
+					<!-- /SEARCH BAR -->
+					<!-- ACCOUNT -->
+					@* 	<div class="col-md-3 clearfix">
+						<div class="header-ctn">
+							<!-- Wishlist -->
+							<div>
+								<a href="#">
+									<i class="fa fa-heart-o"></i>
+									<span>Your Wishlist</span>
+									<div class="qty">2</div>
+								</a>
+							</div>
+							<!-- /Wishlist -->
+							<!-- Cart -->
+							<div class="dropdown">
+								<a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
+									<i class="fa fa-shopping-cart"></i>
+									<span>Your Cart</span>
+									<div class="qty">3</div>
+								</a>
+								<div class="cart-dropdown">
+									<div class="cart-list">
+										<div class="product-widget">
+											<div class="product-img">
+												<img src="img/product01.png" alt="">
+											</div>
+											<div class="product-body">
+												<h3 class="product-name"><a href="#">product name goes here</a></h3>
+												<h4 class="product-price"><span class="qty">1x</span>$980.00</h4>
+											</div>
+											<button class="delete"><i class="fa fa-close"></i></button>
+										</div>
+
+										<div class="product-widget">
+											<div class="product-img">
+												<img src="img/product02.png" alt="">
+											</div>
+											<div class="product-body">
+												<h3 class="product-name"><a href="#">product name goes here</a></h3>
+												<h4 class="product-price"><span class="qty">3x</span>$980.00</h4>
+											</div>
+											<button class="delete"><i class="fa fa-close"></i></button>
+										</div>
+									</div>
+									<div class="cart-summary">
+										<small>3 Item(s) selected</small>
+										<h5>SUBTOTAL: $2940.00</h5>
+									</div>
+									<div class="cart-btns">
+										<a href="#">View Cart</a>
+										<a href="#">Checkout  <i class="fa fa-arrow-circle-right"></i></a>
+									</div>
+								</div>
+							</div>
+							<!-- /Cart -->
+							<!-- Menu Toogle -->
+							<div class="menu-toggle">
+								<a href="#">
+									<i class="fa fa-bars"></i>
+									<span>Menu</span>
+								</a>
+							</div>
+							<!-- /Menu Toogle -->
+						</div>
+					</div> *@
+					<!-- /ACCOUNT -->
+				</div>
+				<!-- row -->
+			</div>
+			<!-- container -->
+		</div>
+		<!-- /MAIN HEADER -->
+	</header>
+	@await Component.InvokeAsync("TopMenu")
+	@{
+
+		var images = item.Value<IEnumerable<IPublishedContent>>("selectItemImages"); // replace "gallery" with your property alias
+		var firstImage = images?.FirstOrDefault();
+
+	}
+	<div class="pd-wrap">
+		<div class="container">
+			<div class="heading-section " style="text-align:left">
+				<h2 class="m-4">Product Details</h2>
+			</div>
+			<div class="row">
+				<div class="col-md-6">
+					<div id="slider" class="owl-carousel product-slider">
+						@if (images != null && images.Any())
+
+						{
+
+							foreach (var image in images)
+
+							{
+
+								<div class="item">
+									<img src="@image.Url()" />
+								</div>
+
+							}
+						}
+					</div>
+					<div id="thumb" class="owl-carousel product-thumb">
+
+						@if (images != null && images.Any())
+
+
+
+						{
+
+
+
+							foreach (var image in images)
+
+
+
+							{
+								<div class="item">
+									<img src="@image.Url()" />
+								</div>
+
+							}
+						}
+						
+				</div>
+			</div>
+			<div class="col-md-6 p-4">
+				<div class="product-dtl">
+					<div class="product-info">
+							<div class="product-name">@item.Name</div>
+
+							<div class="product-price-discount"><span>Ksh. @item.Value("actualPrice")</span><span class="line-through">Ksh. @item.Value("initialPrice")</span></div>
+					</div>
+						
+	
+					<div class="product-count">
+						<label for="size">Quantity</label>
+							<p>@item.Value("moreDescription")</p>
+
+						<form action="#" class="display-flex">
+							<div class="qtyminus" class="">-</div>
+							<input  type="text" name="quantity" value="1" class="qty">
+								<div class="qtyplus" >+</div>
+						</form>
+							@{
+								var whatsAppNumber = homePage.Value<string>("whatsAppNumber");
+						
+    var productName = item.Name;
+								var descriptionHtml = item.Value<string>("moreDescription"); // RTE
+								var descriptionPlain = Regex.Replace(descriptionHtml ?? "", "<.*?>", string.Empty); // strip HTML
+
+								var currentPrice = item.Value<decimal>("actualPrice"); // replace "price" with your alias
+								var loyaltyPoints = currentPrice / 100; // simple calc
+
+    var message = $"Hello, I am interested in the product *{productName}*.\n\n" +
+                  $"Details: {descriptionPlain}\n\n" +
+                  $"Loyalty Points Earned: {loyaltyPoints}\n\n" +
+                  "Could you please share more info?";
+
+    var encodedMessage = System.Net.WebUtility.UrlEncode(message);
+    var waLink = $"https://wa.me/{whatsAppNumber}?text={encodedMessage}";
+}
+
+<a href="@waLink" target="_blank" class="round-black-btn">
+    <i class="fab fa-whatsapp"></i> Shop Now
+</a>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+
+			<div style="text-align:left;font-size:14px;padding-bottom:20px;">	</div>
+	</div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="	sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+
+<script src="~/assets/js/product-details.js"></script>
+
+</body>

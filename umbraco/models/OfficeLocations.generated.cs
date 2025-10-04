@@ -18,14 +18,14 @@ using Umbraco.Extensions;
 
 namespace Umbraco.Cms.Web.Common.PublishedModels
 {
-	/// <summary>Item Per Categories</summary>
-	[PublishedModel("itemPerCategories")]
-	public partial class ItemPerCategories : ItemsDetailEach
+	/// <summary>Office Locations</summary>
+	[PublishedModel("officeLocations")]
+	public partial class OfficeLocations : PublishedContentModel
 	{
 		// helpers
 #pragma warning disable 0109 // new is redundant
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.2.0+4eae48e")]
-		public new const string ModelTypeAlias = "itemPerCategories";
+		public new const string ModelTypeAlias = "officeLocations";
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.2.0+4eae48e")]
 		public new const PublishedItemType ModelItemType = PublishedItemType.Content;
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.2.0+4eae48e")]
@@ -34,14 +34,14 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 			=> PublishedModelUtility.GetModelContentType(contentTypeCache, ModelItemType, ModelTypeAlias);
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.2.0+4eae48e")]
 		[return: global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		public static IPublishedPropertyType GetModelPropertyType<TValue>(IPublishedContentTypeCache contentTypeCache, Expression<Func<ItemPerCategories, TValue>> selector)
+		public static IPublishedPropertyType GetModelPropertyType<TValue>(IPublishedContentTypeCache contentTypeCache, Expression<Func<OfficeLocations, TValue>> selector)
 			=> PublishedModelUtility.GetModelPropertyType(GetModelContentType(contentTypeCache), selector);
 #pragma warning restore 0109
 
 		private IPublishedValueFallback _publishedValueFallback;
 
 		// ctor
-		public ItemPerCategories(IPublishedContent content, IPublishedValueFallback publishedValueFallback)
+		public OfficeLocations(IPublishedContent content, IPublishedValueFallback publishedValueFallback)
 			: base(content, publishedValueFallback)
 		{
 			_publishedValueFallback = publishedValueFallback;
@@ -50,26 +50,51 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		// properties
 
 		///<summary>
-		/// Category Description
+		/// Cell Phone
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.2.0+4eae48e")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("categoryDescription")]
-		public virtual string CategoryDescription => this.Value<string>(_publishedValueFallback, "categoryDescription");
+		[ImplementPropertyType("cellPhone")]
+		public virtual string CellPhone => this.Value<string>(_publishedValueFallback, "cellPhone");
 
 		///<summary>
-		/// Category IMage
+		/// Contact Person
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.2.0+4eae48e")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("categoryIMage")]
-		public virtual global::Umbraco.Cms.Core.Models.MediaWithCrops CategoryImage => this.Value<global::Umbraco.Cms.Core.Models.MediaWithCrops>(_publishedValueFallback, "categoryIMage");
+		[ImplementPropertyType("contactPerson")]
+		public virtual string ContactPerson => this.Value<string>(_publishedValueFallback, "contactPerson");
 
 		///<summary>
-		/// Mark As Top Category
+		/// County
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.2.0+4eae48e")]
-		[ImplementPropertyType("markAsTopCategory")]
-		public virtual bool MarkAsTopCategory => this.Value<bool>(_publishedValueFallback, "markAsTopCategory");
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("county")]
+		public virtual string County => this.Value<string>(_publishedValueFallback, "county");
+
+		///<summary>
+		/// Email
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.2.0+4eae48e")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("email")]
+		public virtual string Email => this.Value<string>(_publishedValueFallback, "email");
+
+		///<summary>
+		/// Latitude
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.2.0+4eae48e")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("latitude")]
+		public virtual string Latitude => this.Value<string>(_publishedValueFallback, "latitude");
+
+		///<summary>
+		/// Longitude
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.2.0+4eae48e")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("longitude")]
+		public virtual string Longitude => this.Value<string>(_publishedValueFallback, "longitude");
 	}
 }

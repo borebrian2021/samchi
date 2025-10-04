@@ -1,4 +1,11 @@
-WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateBuilder(args);
+
+// Configure the backoffice auth cookie BEFORE building Umbraco
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    // Make the Umbraco backoffice auth cookie valid for the whole domain
+    options.Cookie.Path = "/";
+});
 
 builder.CreateUmbracoBuilder()
     .AddBackOffice()
@@ -6,11 +13,10 @@ builder.CreateUmbracoBuilder()
     .AddComposers()
     .Build();
 
-WebApplication app = builder.Build();
+var app = builder.Build();
 
 await app.BootUmbracoAsync();
 app.UseStaticFiles();
-
 
 app.UseUmbraco()
     .WithMiddleware(u =>

@@ -98,6 +98,14 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		public virtual string FIcon => this.Value<string>(_publishedValueFallback, "fIcon");
 
 		///<summary>
+		/// Footer About Us
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.2.0+4eae48e")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("footerAboutUs")]
+		public virtual string FooterAboutUs => this.Value<string>(_publishedValueFallback, "footerAboutUs");
+
+		///<summary>
 		/// I-Icon
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.2.0+4eae48e")]

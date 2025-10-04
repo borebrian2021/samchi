@@ -134,6 +134,14 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		public virtual int InitialPriceOther => this.Value<int>(_publishedValueFallback, "initialPriceOther");
 
 		///<summary>
+		/// Item Description
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.2.0+4eae48e")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("itemDescription")]
+		public virtual global::Umbraco.Cms.Core.Strings.IHtmlEncodedString ItemDescription => this.Value<global::Umbraco.Cms.Core.Strings.IHtmlEncodedString>(_publishedValueFallback, "itemDescription");
+
+		///<summary>
 		/// Item Name:
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.2.0+4eae48e")]
@@ -191,7 +199,7 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.2.0+4eae48e")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
 		[ImplementPropertyType("moreDescription")]
-		public virtual string MoreDescription => this.Value<string>(_publishedValueFallback, "moreDescription");
+		public virtual global::Umbraco.Cms.Core.Strings.IHtmlEncodedString MoreDescription => this.Value<global::Umbraco.Cms.Core.Strings.IHtmlEncodedString>(_publishedValueFallback, "moreDescription");
 
 		///<summary>
 		/// OS (IOS /Smartphone/Windows):
