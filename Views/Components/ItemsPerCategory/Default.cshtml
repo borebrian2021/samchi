@@ -1,11 +1,17 @@
-﻿   @model IEnumerable<Umbraco.Cms.Core.Models.PublishedContent.IPublishedContent>
+﻿
+
+
+   @model IEnumerable<Umbraco.Cms.Core.Models.PublishedContent.IPublishedContent>
+   @inject Umbraco.Cms.Web.Common.UmbracoHelper Umbraco
 @{
 	var categoryId = Context.Request.Query["ItemCategory"].FirstOrDefault();
+	var home = ViewBag.HomeValues as IPublishedContent;
+	var homePage = Umbraco.ContentAtRoot().FirstOrDefault(x => x.ContentType.Alias == "leadsManagementSection");
+
 }
 
 
 <div class="section">
-
 
 	<!-- container -->
 	<div class="container">
@@ -34,91 +40,97 @@
 					}
 
 					<h3 class="title">@categoryId (@s)</h3>
-					@* 	<div class="section-nav">
+					@*
+						<div class="section-nav">
+
 						<ul class="section-tab-nav tab-nav">
 							<li class="active"><a data-toggle="tab" href="#tab2">Laptops</a></li>
 							<li><a data-toggle="tab" href="#tab2">Smartphones</a></li>
 							<li><a data-toggle="tab" href="#tab2">Cameras</a></li>
 							<li><a data-toggle="tab" href="#tab2">Accessories</a></li>
 						</ul>
-					</div> *@
+
+					</div>*@
 				</div>
 			</div>
 			<!-- /section title -->
 			<!-- Products tab & slick -->
 			<div class="col-md-12">
-	<div class="row">
-		<div class="products-tabs">
-			<!-- tab -->
-			<div id="tab2" class="tab-pane fade in active">
-				<div class="products-slick" data-nav="#slick-nav-2">
+				<div class="row">
+					<div class="products-tabs">
+						<!-- tab -->
+						<div id="tab2" class="tab-pane fade in active">
+							<div class="products-slick" data-nav="#slick-nav-2">
 
-					@foreach (var x in Model)
-					{
-						foreach (var y in x.Children.Where(v => v.Name == categoryId))
-						{
-							foreach (var c in y.Children)
-							{
-								s = s + 1;
-								double discount = 0;
-								int initialPrice = 0;
-								int currentPrice = 0;
-
-								if (c.Value("initialPrice") != null)
+								@foreach (var x in Model)
 								{
-									initialPrice = c.Value<int>("initialPrice");
-									currentPrice = c.Value<int>("actualPrice");
-
-									if (initialPrice > 0)
+									foreach (var y in x.Children.Where(v => v.Name == categoryId))
 									{
-										discount = ((double)(initialPrice - currentPrice) / initialPrice) * 100;
-									}
-								}
-								else
-								{
-									initialPrice = c.Value<int>("initialPriceOther");
-									currentPrice = c.Value<int>("actualPriceOther");
+										foreach (var c in y.Children)
+										{
+											s = s + 1;
+											double discount = 0;
+											int initialPrice = 0;
+											int currentPrice = 0;
 
-									if (initialPrice > 0)
-									{
-										discount = ((double)(initialPrice - currentPrice) / initialPrice) * 100;
-									}
-								}
-
-								var images = c.Value<IEnumerable<Umbraco.Cms.Core.Models.MediaWithCrops>>("selectItemImages");
-								var firstImage = images?.FirstOrDefault();
-								
-								<div class="product">
-									<div class="product-img">
-										<img src="@firstImage?.Url()" alt="">
-										<div class="product-label">
-											@if (discount > 0)
+											if (c.Value("initialPrice") != null)
 											{
-												<span class="sale">-@Math.Round(discount, 0)%</span>
+												initialPrice = c.Value<int>("initialPrice");
+												currentPrice = c.Value<int>("actualPrice");
+
+												if (initialPrice > 0)
+												{
+													discount = ((double)(initialPrice - currentPrice) / initialPrice) * 100;
+												}
+											}
+											else
+											{
+												initialPrice = c.Value<int>("initialPriceOther");
+												currentPrice = c.Value<int>("actualPriceOther");
+
+												if (initialPrice > 0)
+												{
+													discount = ((double)(initialPrice - currentPrice) / initialPrice) * 100;
+												}
 											}
 
-											@if (c.Value<Boolean>("markAsTopSelling"))
-											{
-												<span class="new">NEW</span>
-											}
-										</div>
-									</div>
-									<div class="product-body">
-										<p class="product-category">@y.Name</p>
-										<h3 class="product-name"><a href="#">@c.Name</a></h3>
-										<h4 class="product-price">@currentPrice.00 <del class="product-old-price">@initialPrice.00</del></h4>
-									</div>
+											var images = c.Value<IEnumerable<Umbraco.Cms.Core.Models.MediaWithCrops>>("selectItemImages");
+											var firstImage = images?.FirstOrDefault();
 
-									<div class="add-to-cart">
-										<button class="add-to-cart-btn"><i class="fab fa-whatsapp"></i> &nbsp; Order Now</button>
-									</div>
+											<div class="product">
+												<div class="product-img">
+													<img src="@firstImage?.Url()" alt="">
+													<div class="product-label">
+														@if (discount > 0)
+														{
+															<span class="sale">-@Math.Round(discount, 0)%</span>
+														}
 
-									<div class="add-to-cart">
-	<a class="add-to-cart-btn"
-	   target="_blank"
-	   href="https://wa.me/?text=@Uri.EscapeDataString($"Hello, I am interested in this item:\n\nName: {c.Name}\nCategory: {y.Name}\nPrice: {currentPrice}.00 KES\nDiscount: {Math.Round(discount, 0)}%")">
-		<i class="fab fa-whatsapp"></i> &nbsp; Order Now
-	</a>
+														@if (c.Value<Boolean>("markAsTopSelling"))
+														{
+															<span class="new">NEW</span>
+														}
+													</div>
+												</div>
+												<div class="product-body">
+													<p class="product-category">@y.Name</p>
+													<h3 class="product-name"><a href="#">@c.Name</a></h3>
+													<h4 class="product-price">@currentPrice.00 <del class="product-old-price">@initialPrice.00</del></h4>
+												</div>
+
+												<div class="add-to-cart">
+													<button class="add-to-cart-btn"><i class="fab fa-whatsapp"></i> &nbsp; Order Now</button>
+												</div>
+												<div class="add-to-cart">
+													@{
+														Random X = new Random();
+														DateTime k = new DateTime();
+													}
+									<button class="add-to-cart-btn"
+        onclick="newLead(event, '@home.Value("whatsAppNumber")', '@c.Id', '@X.Next(100000,999999)', '@c.Value("actualPrice")', '@c.Name',@homePage.Id)"
+        target="_blank" ><i class="fab fa-whatsapp"></i> &nbsp; Order Now
+	</button>
+	<a id="loadWhatsapp" href="https://wa.me/?text=@Uri.EscapeDataString($"Hello, I am interested in this item:\n\nName: {c.Name}\nCategory: {y.Name}\nPrice: {currentPrice}.00 KES\nDiscount: {Math.Round(discount, 0)}%")"></a>
 </div>
 								</div>
 							}

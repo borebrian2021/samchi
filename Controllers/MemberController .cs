@@ -49,10 +49,14 @@ namespace Mysamchi.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Logout(string redirectUrl = "/")
+        public async Task<IActionResult> Logout(string redirectUrl = "/login")
         {
             await _memberSignInManager.SignOutAsync();
+            TempData["LoginError"] = "Logged out successfully!";
+
             return Redirect(redirectUrl);
         }
+
+
     }
 }

@@ -11,6 +11,7 @@ public class ItemsPerCategoryViewComponent : ViewComponent
 
     public ItemsPerCategoryViewComponent(IUmbracoContextAccessor umbracoContextAccessor)
     {
+
         _umbracoContextAccessor = umbracoContextAccessor;
     }
 
@@ -22,13 +23,11 @@ public class ItemsPerCategoryViewComponent : ViewComponent
         {
             return Content("No Umbraco context available.");
         }
-
         // Fetch content nodes by alias
-        var items = umbracoContext.Content
-            .GetAtRoot()
+        var items = umbracoContext.Content.GetAtRoot()
             .DescendantsOrSelfOfType("itemsDetailEach").ToList();
         
-
+        ViewBag.HomeValues= umbracoContext.Content.GetAtRoot().FirstOrDefault(x => x.ContentType.Alias == "home");
 
         return View(items); // Pass into the component's view
     }
