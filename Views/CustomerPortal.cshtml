@@ -5,6 +5,7 @@
 @inject Umbraco.Cms.Core.Security.IMemberManager MemberManager
 @{
     var allleads = Umbraco.ContentAtRoot().FirstOrDefault(x => x.ContentType.Alias == "leadsManagementSection");
+    var accounts = Umbraco.ContentAtRoot().FirstOrDefault(x => x.ContentType.Alias == "loyaltyAccountsManagement");
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -16,7 +17,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 <link href="~/assets/country-picker-flags/build/css/countryselect.min.css" rel="stylesheet" />
 <link href="~/assets/country-picker-flags/build/css/demo.css" rel="stylesheet" />
-
+	<link rel="stylesheet" href="/css/font-awesome.min.css">
 </head>
 <body>
     @{
@@ -185,7 +186,7 @@
                                     if (roles.Contains("Administrators"))
                                     {
 
-                                        @foreach (var x in allleads.Children.Where(i => i.Value<bool>("status") == true && i.Value<string>("claimedBy") == currentEmail))
+                                        @foreach (var x in allleads.Children.Where(i => !i.Value<bool>("closed") && i.Value<string>("claimedBy") == currentEmail))
                                         {
                                             <tr>
                                                 <td><span class="badge p-2 bg-success">@x.Value("orderId")</span></td>
@@ -197,11 +198,11 @@
                                                     @x.Value("loyaltyPoints")</td>
                                                 <td>@x.CreateDate</td>
                                                 <td><p><span class="badge bg-success">In progress ...</span></p></td>
-                                                <td><p> @x.Value("claimedBy")</td>
+                                                <td><p> @x.Value("claimedBy") @x.Value("actualPrice")< /td>
                                                 <td>
                                                     <div class="btn-group" role="group">
-                                                        <button type="button" class="btn btn-danger">Revoke claim</button>
-                                                        <button type="button" class="btn btn-success"  onclick="closeLead(@x.Value("orderId"),@x.Id)">Close lead</button>
+                                                        <button type="button" class="btn btn-danger">Revoke claim @x.Id</button>
+                                                        <button type="button" class="btn btn-success"  onclick="closeLead(@x.Value("orderId"),@x.Id, @x.Value("price")">Close lead</button>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -214,7 +215,7 @@
 
 
                                         @foreach (var x in allleads.Children
-                                           .Where(i => i.Value<bool>("status") && i.Value<string>("claimedBy") == currentEmail))
+                                           .Where(i => !i.Value<bool>("closed") && i.Value<string>("claimedBy") == currentEmail))
                                         {
                                             <tr>
                                                 <td><span class="badge p-2 bg-success">@x.Value("orderId")</span></td>
@@ -227,8 +228,8 @@
                                                 <td>@x.Value("claimedBy")</td>
                                                 <td>
                                                     <div class="btn-group" role="group">
-                                                        <button type="button" onclick="revokeClaim(@x.Id)" class="btn btn-danger">Revoke claim</button>
-                                                        <button type="button" onclick="closeLead(@x.Value("orderId"),@x.Id)" class="btn btn-success">Close lead</button>
+                                                        <button type="button" onclick="revokeClaim(@x.Id)" class="btn btn-danger">Revoke claim </button>
+                                                        <button type="button" onclick="closeLead(@x.Value("orderId"),@x.Id,@x.Value("price"))" class="btn btn-success">Close lead</button>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -303,49 +304,52 @@
                 <table class="table table-bordered table-hover" id="loyaltypointsTable">
                     <thead class="table-dark">
                         <tr>
-                            <th>Order ID</th>
                             <th>Phone Number</th>
                             <th>Loyalty Points</th>
                             <th>Number of Orders</th>
                             <th>Last Order Date</th>
-                            <th>Add/Remove points</th>
+                          
 
                             <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>86868687</td>
-                            <td>+254 712035642</td>
+                    @{
+    foreach (var x in accounts.Children.Where(c => c.Value<string>("createdBy") == currentEmail))
+    {
+        var phone = x.Value<string>("whatAppNumber");
+        var points = x.Value<int>("loyaltyPointsEarned");
+        var orders = x.Value<int>("numberOfOrders");
+        var lastOrderDate = x.Value<DateTime>("lastOrderDate").ToString("dd MMM yyyy");
 
-                            <td>14328</td>
-                            <td>6</td>
-                            <td>4/10/2025</td>
-                          
-                            <td>
+        // build prefilled WhatsApp message
+        var message = $"Hello 👋, this is *Samchi Electronic Shop*.\n" +
+                      $"You currently have *{x.Value<int>("loyaltyPointsEarned")} loyalty points* from *{x.Value<int>("numberOfOrders")} orders*.\n" +
+                      $"Your last order was on *{x.Value<DateTime>("lastOrderDate").ToString("dd MMM yyyy")}*.\n" +
+                      $"Thank you for shopping with us! 🛍️";
 
-                                <div class="container my-4">
-                                    <div class="row align-items-center">
-                                        <!-- Centered Add + Input -->
-                                        <div class="col-md-8 d-flex justify-content-center">
-                                            <div class="input-group">
-                                                <button class="btn btn-success" type="button">Add</button>
-                                                <input type="text" class="form-control" placeholder="Enter value">
-                                                <button class="btn btn-success" type="button">Deduct</button>
+        // format phone correctly for WhatsApp link
+        var formattedPhone = phone.StartsWith("0") ? "254" + phone.Substring(1) : phone;
+        var waLink = $"https://wa.me/{formattedPhone}?text={Uri.EscapeDataString(message)}";
+    <tr>
+        <td>@phone</td>
+        <td>@points</td>
+        <td>@orders</td>
+        <td>@lastOrderDate</td>
 
-                                            </div>
-                                        </div>
+       
 
-                                        <!-- Right-aligned Reduce -->
-                                       @*  <div class="col-md-4 d-flex justify-content-end">
-                                            <button class="btn btn-danger" type="button">Reduce</button>
-                                        </div> *@
-                                    </div>
-                                </div>
-                            </td>
-                            <td><p> <button class="btn btn-danger m-2">Delete</button></p></td>
-                        </tr>
-                      
+        <td>
+            <div class="btn-group my-4" role="group" aria-label="Basic mixed styles example">
+                <a href="@waLink" target="_blank" class="btn btn-success">
+                    <i class="fa fa-whatsapp"></i> Send Message
+                </a>
+                <button type="button" class="btn btn-danger">Delete</button>
+            </div>
+        </td>
+    </tr>
+    }
+}
 
                     </tbody>
                 </table>
@@ -367,7 +371,7 @@
       <!-- Header -->
       <div class="modal-header bg-success text-white">
         <h5 class="modal-title" id="closeLeadModalLabel">
-          <i class="bi bi-check-circle-fill me-2"></i> Close Lead
+          <i class="bi bi-check-circle-fill me-2"></i><span id="">Close Lead</span> 
         </h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
@@ -376,7 +380,7 @@
       <div id="closeLeadAlert" class="alert d-none mx-3 mt-3" role="alert"></div>
   
       <!-- Form -->
-     <form id="closeLeadForm" onsubmit="submitCloseLead(event)">
+     <form id="closeLeadForm" onsubmit="submitCloseLead1(event)">
   <div class="modal-body">
     <div class="row g-3">
       <!-- 📱 Phone Number Field (Always Visible) -->
@@ -414,12 +418,13 @@
         </div>
 
         <!-- Hidden Lead ID -->
-        <input type="hidden" id="itemId" />
+        <input  id="itemId" />
+        <input  id="itemPrice" />
       </div>
 
       <!-- ➕ Create Account Button (Shown if no record found) -->
       <div id="createAccountWrapper" class="d-none mt-2">
-        <button type="button" class="btn btn-sm btn-success" onclick="createAccount()">
+        <button type="button" class="btn btn-sm btn-success" id="" onclick="goToCreateAccount(event, `@currentEmail`)">
           <i class="bi bi-person-plus-fill me-1"></i> Create Account
         </button>
       </div>
@@ -430,8 +435,7 @@
   <div id="formFooter" class="modal-footer d-none">
     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
     <button type="submit" class="btn btn-success">
-      <i class="bi bi-send-check me-1"></i> Submit & Close Lead
-    </button>
+      <i class="bi bi-send-check me-1"></i> Submit & Close Lead</button>
   </div>
 </form>
 
@@ -450,9 +454,6 @@
         </h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-         <!-- Modal Header -->
-    
-
       <!-- ✅ Modal Body -->
       <div class="modal-body">
        <p id="remarks-id"></p>
@@ -465,8 +466,6 @@
       <!-- ✅ Alert area -->
       <div id="closeLeadAlert" class="alert d-none mx-3 mt-3" role="alert"></div>
 
-      <!-- Form -->
-  
     </div>
   </div>
 </div>

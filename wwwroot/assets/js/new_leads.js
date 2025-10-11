@@ -58,11 +58,13 @@ window.addEventListener('DOMContentLoaded', () => {
     initYouTubeVideos();
 })
 //function closeLead(closedBy, closeTime,remarks,closeType,itemId) {
-function closeLead(OrderID, itemID) {
-    $('#closeLeadModal').modal('show');
+function closeLead(OrderID, itemID, itemPrice) {
+    console.log(itemPrice)
+    console.log(itemID)
     $('#leadId').text("Close Lead | " + OrderID);
     $('#itemId').val(itemID);
-   
+    $('#itemPrice').val(itemPrice);
+    $('#closeLeadModal').modal('show');
     //const formData = new FormData();
     //formData.append("Id", id);
 
@@ -93,15 +95,14 @@ function closeLead(OrderID, itemID) {
 // Handle form submit
 function submitCloseLead(event) {
     event.preventDefault();
-
     const closedBy = document.getElementById("closedBy").value;
     const closeTime = document.getElementById("closeTime").value;
     const remarks = document.getElementById("remarks").value;
     const closeType = document.getElementById("closeType").value;
     const itemId = document.getElementById("itemId").value;
-    console.log(itemId);
+    const itemPrice = document.getElementById("itemPrice").value;
 
-    closeLead(closedBy, closeTime, remarks, closeType, itemId);
+    closeLead(closedBy, closeTime, remarks, closeType, itemId, itemPrice);
 }
 
  //Example close lead handler
@@ -252,7 +253,7 @@ function claimLead(id) {
         }
     });
 }
-function openLoyaltyAccountForm(email = '') {
+function openLoyaltyAccountForm(email = '',phoneNumber,) {
     Swal.fire({
         title: 'Create Loyalty Account',
         html: `
@@ -269,6 +270,7 @@ function openLoyaltyAccountForm(email = '') {
                 <label class="form-label mt-2">Number of Orders</label>
                 <input id="lp-num-orders" type="number" min="0" value="1" class="form-control" placeholder="e.g. 1">
 
+               
                 <label class="form-label mt-2">Last Order Date</label>
                 <input id="lp-last-date" type="date" class="form-control">
 
@@ -311,6 +313,7 @@ function openLoyaltyAccountForm(email = '') {
 }
 
 function submitLoyaltyAccount(data) {
+    console.log("Points Eraned:"+data.points)
     const formData = new FormData();
     formData.append("OrderId", data.orderId);
     formData.append("WhatAppNumber", data.whatsapp);
@@ -446,14 +449,85 @@ function closeLeadAndSubmit(event, phoneNumber, itemId, orderId, price, itemName
         });
 }
 
-async function submitCloseLead(event){
+async function goToCreateAccount(event,email) {
+    $('#closeLeadModal').modal('hide');
+    const phoneNumber = document.getElementById("phoneNumber").value;
+    const itemPrice = document.getElementById("itemPrice").value;
+    const points = itemPrice / 100
+
+    console.log(phoneNumber);
+    console.log(points);
+
+    Swal.fire({
+        title: 'Confirm Creation of account for '+phoneNumber,
+        html: `
+            <div id="loyalty-form" class="text-start">
+                
+                <input id="lp-order-id" type="text" class="form-control" hidden placeholder="Enter order ID">
+
+                <label class="form-label mt-2">WhatsApp Number</label>
+                <input id="lp-whatsapp" value="${phoneNumber}" type="text" class="form-control" placeholder="e.g. 0722123456">
+
+                <label class="form-label mt-2">Loyalty Points Earned</label>
+                <input id="lp-points" type="number" value=${points} min="0" class="form-control" placeholder="e.g. 10">
+
+                <label class="form-label mt-2">Number of Orders</label>
+                <input id="lp-num-orders" type="number"  min="0" value="1" class="form-control" placeholder="e.g. 1">
+
+             <input id="lp-last-date" type="date" value="${ new Date().toISOString().split('T')[0]}" class= "form-control" >
+
+
+                <label class="form-label mt-2">Created By</label>
+                <input id="lp-created-by" type="text" class="form-control" disabled value="${email}" placeholder="Enter your email">
+            </div>
+        `,
+        focusConfirm: false,
+        showCancelButton: true,
+        confirmButtonText: 'Create Account',
+        cancelButtonText: 'Cancel',
+        allowEnterKey: false, // 🚫 prevents enter key refresh
+        didOpen: () => {
+            // 👇 prevent any hidden <form> behavior
+            const popup = Swal.getPopup();
+            popup.addEventListener('submit', e => e.preventDefault());
+        },
+        preConfirm: () => {
+            console.log("PreConfirm Triggered ✅");
+            const orderId = document.getElementById('lp-order-id').value.trim();
+            const whatsapp = document.getElementById('lp-whatsapp').value.trim();
+            const points = document.getElementById('lp-points').value.trim();
+            const numOrders = document.getElementById('lp-num-orders').value.trim();
+            const lastDate = document.getElementById('lp-last-date').value.trim();
+            const createdBy = document.getElementById('lp-created-by').value.trim();
+
+            if (!whatsapp || !points || !numOrders || !lastDate || !createdBy) {
+                Swal.showValidationMessage(`⚠️ Please fill in all required fields.`);
+                return false;
+            }
+
+            return { orderId, whatsapp, points, numOrders, lastDate, createdBy };
+        }
+    }).then(result => {
+        if (result.isConfirmed) {
+            console.log("Confirmed ✅", result.value);
+            submitLoyaltyAccount(result.value);
+        }
+    });
+}
+
+
+async function submitCloseLead1(event) {
+
     event.preventDefault();
+    alert("mdmdm")
     const alertBox = document.getElementById("closeLeadAlert");
     const closedBy = document.getElementById("closedBy").value;
     const closeTime = document.getElementById("closeTime").value;
     const closeType = document.getElementById("closeType").value;
     const remarks = document.getElementById("remarks").value;
     const itemId = document.getElementById("itemId").value;
+    const itemPrice = document.getElementById("itemPrice").value;
+    const phoneNumber = document.getElementById("phoneNumber").value;
 
     if (!closeType || !closeTime || !remarks) {
         showAlert("Please fill in all required fields.", "danger");
@@ -461,14 +535,15 @@ async function submitCloseLead(event){
     }
 
     const formData = new FormData();
-    formData.append("ClosedBy", closedBy);
-    formData.append("CloseTime", closeTime);
-    formData.append("CloseType", closeType);
-    formData.append("Remarks", remarks);
-    formData.append("ItemId", itemId);
+    formData.append("phone", phoneNumber);
+    formData.append("closeTime", closeTime);
+    formData.append("closeType", closeType);
+    formData.append("remarks", remarks);
+    formData.append("itemId", itemId);
+    formData.append("itemPrice", itemPrice);
 
     try {
-        const res = await fetch('/umbraco/surface/Leads/CloseLead', {
+        const res = await fetch('/umbraco/surface/Leads/CloseLeads', {
             method: 'POST',
             body: formData,
             headers: { 'Accept': 'application/json' }
@@ -527,6 +602,8 @@ document.addEventListener("DOMContentLoaded", () => {
         if (showCreateBtn) {
             createBtnWrapper?.classList.remove("d-none");
         } else {
+
+
             createBtnWrapper?.classList.add("d-none");
         }
     }
@@ -542,18 +619,26 @@ document.addEventListener("DOMContentLoaded", () => {
     async function checkPhoneNumber() {
         const phone = phoneInput.value.trim();
 
-        // Reset UI before new check
+        // Reset UI before each check
         toggleVisibility(false, false);
         setFeedback("");
 
-        if (!phone || phone.length < 10) {
+        // ✅ Validate phone number length
+        const isValidPhone = phone && phone.length >= 10 && phone.length <= 14;
+        if (!isValidPhone) {
             setFeedback("Please enter a valid phone number.");
+            toggleVisibility(false, true); // Show create account button even if invalid
             return;
         }
 
         try {
-            const response = await fetch(`/umbraco/surface/Leads/CheckPhone?phone=${encodeURIComponent(phone)}`);
-            if (!response.ok) throw new Error("Network error");
+            const response = await fetch(
+                `/umbraco/surface/Leads/CheckPhone?phone=${encodeURIComponent(phone)}`
+            );
+
+            if (!response.ok) {
+                throw new Error(`Server returned ${response.status}`);
+            }
 
             const data = await response.json();
 
@@ -567,8 +652,10 @@ document.addEventListener("DOMContentLoaded", () => {
         } catch (error) {
             console.error("Error checking phone number:", error);
             setFeedback("⚠️ Could not check phone number.");
+            toggleVisibility(false, true); // Allow creating account even if check fails
         }
     }
+
 });
 
 // ✅ Optional: Create Account action

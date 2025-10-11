@@ -258,44 +258,172 @@ namespace samtech.APIs
                 }
             }
 
+
             [HttpPost]
             [IgnoreAntiforgeryToken]
-            public async Task<IActionResult> CloseLead(int itemId, string closedBy, DateTime closeTime, string closeType, string remarks)
+            public IActionResult CloseLeads(
+            [FromForm] string phone,
+            [FromForm] string closeTime,
+            [FromForm] string closeType,
+            [FromForm] string remarks,
+            [FromForm] int itemId,
+            [FromForm] int itemPrice)
             {
                 try
                 {
-                    // ✅ Get the content node (lead) by its ID
+                    // ✅ 1. Try to find the loyalty account for the phone number
+                    var loyaltyAccount = _umbracoHelper
+                        .ContentAtRoot()
+                        .DescendantsOrSelfOfType("loyaltyPointsAccount")
+                        .FirstOrDefault(x => x.Value<string>("whatAppNumber") == phone);
+
+                    // ✅ Always close the lead (even if account not found)
                     var lead = _contentService.GetById(itemId);
                     if (lead == null)
                         return Json(new { success = false, message = "Lead not found." });
 
-                    // ✅ Update field values (make sure these aliases match your Umbraco document type)
-                    lead.SetValue("closedOn", closeTime);
+                    // ✅ Convert closeTime properly
+                    if (!DateTime.TryParse(closeTime, out var parsedCloseTime))
+                        parsedCloseTime = DateTime.Now;
+
+                    lead.SetValue("closedOn", parsedCloseTime);
                     lead.SetValue("closureStatus", closeType);
-                    if(remarks == "Successful")
-                    {
+                    lead.SetValue("remarks", remarks);
+                    lead.SetValue("closed", true);
+
+                    if (closeType == "Successful")
                         lead.SetValue("closedSuccessfully", true);
 
-                    }
-                    lead.SetValue("remarks", remarks);
-                    lead.SetValue("closed", true); // mark as closed
-
-                    // ✅ Save and publish
                     _contentService.Save(lead);
                     _contentService.Publish(lead, Array.Empty<string>());
 
-                    return Json(new { success = true, message = "Lead closed successfully." });
+                    // ✅ 2. If the close was successful and a loyalty account exists → update it
+                    if (closeType == "Successful" && loyaltyAccount != null)
+                    {
+                        var account = _contentService.GetById(loyaltyAccount.Id);
+                        if (account == null)
+                            return Json(new { success = false, message = $"Account with ID {loyaltyAccount.Id} not found." });
+
+                        // ✅ Calculate and add loyalty points
+                        double newPoints = itemPrice / 100.0;
+                        double totalPoints = account.GetValue<double>("loyaltyPointsEarned") + newPoints;
+                        int totalOrders = account.GetValue<int>("numberOfOrders") + 1;
+
+                        account.SetValue("loyaltyPointsEarned", totalPoints);
+                        account.SetValue("numberOfOrders", totalOrders);
+                      
+
+                        _contentService.Save(account);
+                        _contentService.Publish(account, Array.Empty<string>());
+
+                        return Json(new
+                        {
+                            success = true,
+                            message = $"Lead closed successfully. Loyalty account updated with {newPoints} points."
+                        });
+                    }
+
+                    // ✅ 3. If no loyalty account exists but close succeeded
+                    if (closeType == "Successful" && loyaltyAccount == null)
+                    {
+                        return Json(new
+                        {
+                            success = true,
+                            message = "Lead closed successfully, but no loyalty account found for this number."
+                        });
+                    }
+
+                    // ✅ 4. If close was not successful
+                    return Json(new { success = true, message = "Lead closed (unsuccessful closure)." });
                 }
                 catch (Exception ex)
                 {
-                    // 🔴 Handle errors
-                    return Json(new
-                    {
-                        success = false,
-                        message = $"Error closing lead: {ex.Message}"
-                    });
+                    return Json(new { success = false, message = $"Error closing lead: {ex.Message}" });
                 }
             }
+
+
+            //[HttpPost]
+            //[IgnoreAntiforgeryToken]
+            //public async Task<IActionResult> CloseLead(int itemId, string closedBy, DateTime closeTime, string closeType, string remarks, string phone)
+            //{
+
+            //    if (string.IsNullOrWhiteSpace(phone))
+            //        return Json(new { exists = false });
+
+            //    // 👇 Search for document type 'loyaltyPointsAccount' where 'whatAppNumber' contains the phone
+            //    var content = _umbracoHelper
+            //        .ContentAtRoot()
+            //        .DescendantsOrSelfOfType("loyaltyPointsAccount")
+            //        .FirstOrDefault(x =>
+            //        {
+            //            var number = x.Value<string>("whatAppNumber");
+            //            return !string.IsNullOrEmpty(number) && number.Contains(phone);
+            //        });
+
+            //    if (content != null)
+            //    {
+
+            //        if (closeType == "Successful")
+            //        {
+            //            var lead1 = _contentService.GetById(content.Id);
+            //            if (lead1 == null)
+            //                return NotFound(new { success = false, message = $"Lead with ID {content.Id} not found." });
+            //            int initialPoints = lead1.Value<int>("loyaltyPointsEarned");
+            //            // ✅ Update values
+            //            lead1.SetValue("status", true);
+            //            lead1.SetValue("claimedBy", email);
+            //            lead1.SetValue("claimedOn", DateTime.Now);
+
+            //            _contentService.Save(lead1);
+            //            _contentService.Publish(lead1, Array.Empty<string>());
+
+
+
+            //            try
+            //            {
+            //                // ✅ Get the content node (lead) by its ID
+            //                var lead = _contentService.GetById(itemId);
+            //                if (lead == null)
+            //                    return Json(new { success = false, message = "Lead not found." });
+
+            //                // ✅ Update field values (make sure these aliases match your Umbraco document type)
+            //                lead.SetValue("closedOn", closeTime);
+            //                lead.SetValue("closureStatus", closeType);
+            //                if (remarks == "Successful")
+            //                {
+            //                    lead.SetValue("closedSuccessfully", true);
+
+            //                }
+            //                lead.SetValue("remarks", remarks);
+            //                lead.SetValue("closed", true); // mark as closed
+
+            //                // ✅ Save and publish
+            //                _contentService.Save(lead);
+            //                _contentService.Publish(lead, Array.Empty<string>());
+
+            //                return Json(new { success = true, message = "Lead closed successfully." });
+            //            }
+            //            catch (Exception ex)
+            //            {
+            //                // 🔴 Handle errors
+            //                return Json(new
+            //                {
+            //                    success = false,
+            //                    message = $"Error closing lead: {ex.Message}"
+            //                });
+            //            }
+            //        }
+            //        else
+            //        {
+
+
+            //        }
+            //    }
+
+
+
+            //}
 
 
         }
