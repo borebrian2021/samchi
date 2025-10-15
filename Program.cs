@@ -1,4 +1,9 @@
+
+
 var builder = WebApplication.CreateBuilder(args);
+
+// ? Fix for missing code_challenge during unattended install
+
 
 // Configure the backoffice auth cookie BEFORE building Umbraco
 builder.Services.ConfigureApplicationCookie(options =>

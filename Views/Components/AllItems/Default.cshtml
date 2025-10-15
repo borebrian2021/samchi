@@ -1,4 +1,7 @@
 ﻿   @model IEnumerable<Umbraco.Cms.Core.Models.PublishedContent.IPublishedContent>
+   
+   @inject Umbraco.Cms.Web.Common.UmbracoHelper Umbraco
+	@{var homePage = Umbraco.ContentAtRoot().FirstOrDefault(x => x.ContentType.Alias == "leadsManagementSection");}
 
 @{int s = 0;}
 
@@ -116,11 +119,14 @@
 														<div class="add-to-cart">
 															<button class="add-to-cart-btn"><i class="fab fa-whatsapp"></i> &nbsp; Order Now</button>
 														</div>
-
+														@{
+															Random X = new Random();
+															DateTime k = new DateTime();
+														}
 														<div class="add-to-cart" >
-															<a target="_blank" href="https://wa.me/?text=@Uri.EscapeDataString($"Hello, I am interested in this item:\n\nName: {c.Name}\nCategory: {y.Name}\nPrice: {currentPrice}.00 KES\nDiscount: {Math.Round(discount, 0)}%")">
+															<a target="_blank" onclick="newLead(event, '@c.Value("whatsAppNumber")', '@c.Id', '@X.Next(100000,999999)', '@c.Value("actualPrice")', '@c.Name',@homePage.Id)">
 																<button class="add-to-cart-btn">
-																	<i class="fab fa-whatsapp"></i> &nbsp; Item Details
+																	<i class="fab fa-whatsapp"></i> &nbsp; Shop now
 																</button>
 															</a>	<a target="_blank" href="/product-details?Id=@Uri.EscapeDataString(@c.Id.ToString())">
 																<button class="add-to-cart-btn">

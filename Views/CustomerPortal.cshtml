@@ -57,9 +57,24 @@
 
     <!-- Dashboard Content -->
     <div class="container-fluid my-5">
-        <h2>Welcome backoffice user: @User.Identity?.Name</h2>
-        <h2 class="mb-4">Activities Overview</h2>
-
+   
+         <div class="row gutters-sm">
+            <div class="col-md-12 mb-3">
+              <div class="card">
+                <div class="card-body">
+                  <div class="d-flex flex-column align-items-center text-center">
+                    <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="Admin" class="rounded-circle" width="150">
+                    <div class="mt-3">
+                      <h4>@User.Identity?.Name</h4>
+                      <p class="text-secondary mb-1">System Administrator</p>
+                      <p class="text-muted font-size-sm">@User.Identity?.Name</p>
+                      <button class="btn btn-primary">Log Out</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              </div>
+              </div>
 
 
 
@@ -97,6 +112,7 @@
                 </div>
             </div>
         </div>
+       
         <h2>       Public Wall</h2>
         <!-- Tabs Navigation -->
         <ul class="nav nav-tabs" id="myTabs" role="tablist">
