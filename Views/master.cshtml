@@ -34,6 +34,7 @@
 	<!-- Custom stlylesheet -->
 	<link type="text/css" rel="stylesheet" href="/css/style.css" />
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 
 	<!-- JS (optional, if you want to use icons as JS) -->
 
@@ -86,21 +87,7 @@
 
 
 							<form class="bxq-search-92 d-flex align-items-stretch">
-								<select class="bxq-select-92 border-0 rounded-start " style="border:none;height:40px;">
-									<option value="" selected="">Select Category</option>
-									<option value="All">
-										All items
-									</option>
-									@{
-										<option value="0">All Categories</option>
-
-										foreach (var x in categores.Children)
-										{
-											<option value="1">@x.Name</option>
-										}
-
-									}
-								</select>
+							
 
 								<input type="text" class="bxq-input-92 border-0" style="border:none;height:40px;" placeholder="Search here">
 
@@ -206,9 +193,14 @@
 
 							</strong>
 						</p>
-						<form>
-							<input class="input" type="email" placeholder="Enter Your WhatsApp number">
-							<button class="newsletter-btn"><i class="fab fa-whatsapp"></i> Subscribe</button>
+						
+						<form id="whatsappForm" class="text-center" class="bxq-search-92 d-flex align-items-stretch">
+							<input class="input" type="tel" id="whatsappNumber" placeholder="Enter Your WhatsApp number">
+
+							
+							<button class="newsletter-btn" onclick="subscribe1(event)"><i class="fab fa-whatsapp"></i> Subscribe</button>
+							<!-- Alert message placeholder -->
+							<div id="alertMessage" class="alert mt-3 m-4" style="display:none;"></div>
 						</form>
 						<ul class="newsletter-follow">
 							<li>
@@ -327,9 +319,11 @@
 	<script src="/js/slick.min.js"></script>
 	<script src="/js/nouislider.min.js"></script>
 	<script src="/js/jquery.zoom.min.js"></script>
-	<script src="/js/main.js"></script>
+	<script src="/js/main.js?v=1.0" asp-append-version="true"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/js/all.min.js"></script>
     <script src="~/assets/js/scripts.js"></script>
-	<script src="~/assets/js/new_leads.js"></script>
+	<script src="~/assets/js/new_leads.js" asp-append-version="true"></script>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 </body>
 </html>

@@ -11346,3 +11346,54 @@ header.masthead .site-heading .h1 {
         background:#1E1E1E;
         padding: 1em;
     }
+
+#search-results {
+    background: #fff; /* White background */
+    border-radius: 8px; /* Smooth edges */
+    padding: 10px; /* Space inside */
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1); /* Soft shadow */
+}
+
+.product-widget {
+    display: flex;
+    align-items: center;
+    background: #fff;
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 10px;
+    transition: all 0.3s ease;
+    border: 1px solid #eee;
+}
+
+    .product-widget:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    }
+
+.product-img img {
+    border-radius: 6px;
+    margin-right: 10px;
+    width: 80px;
+    height: auto;
+    object-fit: cover;
+}
+
+.product-body {
+    flex: 1;
+}
+
+.product-name a {
+    color: #333;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+    .product-name a:hover {
+        color: #d91b1b; /* nice red highlight */
+    }
+
+.product-price {
+    color: #111;
+    font-weight: 700;
+    font-size: 15px;
+}

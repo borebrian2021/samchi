@@ -95,7 +95,7 @@
 													var images = c.Value<IEnumerable<Umbraco.Cms.Core.Models.MediaWithCrops>>("selectItemImages");
 													var firstImage = images?.FirstOrDefault();
 
-													<div class="product">
+													<div class="product custome-shaddow">
 														<div class="product-img">
 															<img src="@firstImage?.Url()" alt="">
 															<div class="product-label">
@@ -176,7 +176,7 @@
 								</div>
 							</div>
 
-							<div class="products-widget-slick" data-nav="#@y.Id">
+							<div class="products-widget-slick  " style="padding:15px" data-nav="#@y.Id">
 								<div>
 									@{
 										foreach (var c in y.Children.Where(x => x.Value<bool>("markAsTopSelling")))
@@ -212,7 +212,7 @@
 											var firstImage = images?.FirstOrDefault();
 
 											<!-- product widget -->
-											<div class="product-widget">
+											<div class="product-widget custome-shaddow " style="">
 												<div class="product-img">
 													<img src="@firstImage.Url()" alt="">
 												</div>

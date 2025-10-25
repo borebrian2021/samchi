@@ -1,4 +1,7 @@
-(function($) {
+﻿
+
+
+(function ($) {
 	"use strict"
 
 	// Mobile Nav toggle
@@ -11,6 +14,7 @@
 	$('.cart-dropdown').on('click', function (e) {
 		e.stopPropagation();
 	});
+
 
 	/////////////////////////////////////////
 
@@ -166,3 +170,5 @@
 	}
 
 })(jQuery);
+
+// === Search for Items on Enter Press ===

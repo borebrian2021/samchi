@@ -20,6 +20,7 @@ using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Security;
 using Umbraco.Cms.Web.Common.UmbracoContext;
 using Umbraco.Cms.Persistence.EFCore;
+using Umbraco.Cms.Core.Models.PublishedContent;
 namespace samtech.APIs
 {
     public class DashboardController : SurfaceController
@@ -198,6 +199,128 @@ namespace samtech.APIs
                     return BadRequest(new { success = false, message = ex.Message });
                 }
             }
+
+
+            public class FoundItems()
+            {
+                public string itemName  { get; set; }
+                public string itemId { get; set; }
+                public string imageUrl { get; set; }
+                public string Link { get; set; }
+                public decimal initialPrice { get; set; }
+                public decimal actualPrice { get; set; }
+
+
+            }
+
+
+            public IActionResult Search(string term)
+            {
+                var allItems = new List<IPublishedContent>();
+                var all = new List<FoundItems>();
+
+                var rootItems = UmbracoContext.Content.GetAtRoot();
+
+                var categoriesListWithChildren = rootItems?
+                    .SelectMany(r => r.DescendantsOrSelf())
+                    .FirstOrDefault(x => x.ContentType.Alias == "itemsDetailEach");
+
+                if (categoriesListWithChildren == null)
+                    return Ok(Enumerable.Empty<object>());
+
+                // Loop through all categories and their children
+                foreach (var c in categoriesListWithChildren.Children)
+                {
+                    foreach (var k in c.Children)
+                    {
+                        allItems.Add(k);
+
+                        all.Add(new FoundItems
+                        {
+                            itemName = k.Value<string>("itemName"),
+                            imageUrl = k.Value<IPublishedContent>("itemImage")?.Url(),
+                            actualPrice = k.Value<decimal?>("actualPrice") ?? 0,
+                            initialPrice = k.Value<decimal?>("initialPrice") ?? 0,
+                            Link = $"https://wa.me/?text={Uri.EscapeDataString($"Hello, I am interested in this item:\n\nName: {k.Value<string>("itemName")}\nPrice: {k.Value<decimal?>("actualPrice") ?? 0}.00 KES")}"
+                        });
+                    }
+                }
+
+                // ✅ Filter based on search term
+                var filtered = all
+                    .Where(x => !string.IsNullOrEmpty(x.itemName) &&
+                                x.itemName.Contains(term, StringComparison.OrdinalIgnoreCase))
+                    .Take(10)
+                    .Select(x => new
+                    {
+                        name = x.itemName,
+                        image = x.imageUrl,
+                        actualPrice = x.actualPrice,
+                        initialPrice = x.initialPrice,
+                        link = x.Link
+                    })
+                    .ToList();
+
+                // ✅ Return proper JSON for frontend
+                if (filtered.Count == 0)
+                    return Ok(new List<object>()); // sends empty array
+
+                return Ok(filtered);
+            }
+
+            //[HttpGet]
+            //public IActionResult Search(string term)
+            //{
+            //    if (string.IsNullOrWhiteSpace(term))
+            //        return Ok(Enumerable.Empty<object>());
+
+            //    if (!_umbracoContextAccessor.TryGetUmbracoContext(out var umbracoContext))
+            //        return BadRequest("Cannot access Umbraco context.");
+
+            //    // Find the root of all items (itemsDetailEach)
+            //    var allRoots = umbracoContext.Content?.GetAtRoot();
+            //    var itemsRoot = allRoots?
+            //        .SelectMany(r => r.DescendantsOrSelf())
+            //        .FirstOrDefault(x => x.ContentType.Alias == "itemsDetailEach");
+
+            //    if (itemsRoot == null)
+            //        return BadRequest("Root 'itemsDetailEach' not found.");
+
+            //    // Find all category nodes
+            //    var allCategories = itemsRoot.DescendantsOfType("itemPerCategories");
+            //    var categoryCount = allCategories?.Count() ?? 0;
+
+            //    // Gather all items from within each category
+
+            //    var allItems = allCategories?
+            //        .SelectMany(cat => cat.ChildrenOfType("itemDetails")) // children under each category
+            //        .ToList();
+
+            //    var itemsCount = allItems?.Count ?? 0;
+
+            //    // Search among these items
+            //    var results = allItems?
+            //        .Where(x =>
+            //            (x.Value<string>("itemName") ?? "").Contains(term, StringComparison.OrdinalIgnoreCase)
+            //        )
+            //        .Take(10)
+            //        .Select(x => new
+            //        {
+            //            name = x.Value<string>("itemName"),
+            //            image = x.Value<IPublishedContent>("itemImage")?.Url(),
+            //            actualPrice = x.Value<decimal?>("actualPrice") ?? 0,
+            //            initialPrice = x.Value<decimal?>("initialPrice") ?? 0,
+            //            category = x.Parent?.Name, // show category name
+            //            link = $"https://wa.me/?text={Uri.EscapeDataString($"Hello, I am interested in this item:\n\nName: {x.Value<string>("itemName")}\nCategory: {x.Parent?.Name}\nPrice: {x.Value<decimal?>("actualPrice") ?? 0}.00 KES")}"
+            //        })
+            //        .ToList();
+
+
+            //    return Ok(results);
+            //}
+
+
+
             [HttpGet]
             public IActionResult CheckPhone(string phone)
             {

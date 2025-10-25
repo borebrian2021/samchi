@@ -41,7 +41,58 @@
 }
  *@
 
+ <style>
+      #search-results {
+          background: #fff; /* White background */
+          border-radius: 8px; /* Smooth edges */
+          padding: 10px; /* Space inside */
+          box-shadow: 0 4px 10px rgba(0,0,0,0.1); /* Soft shadow */
+      }
 
+      .product-widget {
+          display: flex;
+          align-items: center;
+          background: #fff;
+          border-radius: 8px;
+          padding: 10px;
+          margin-bottom: 10px;
+          transition: all 0.3s ease;
+          border: 1px solid #eee;
+      }
+
+          .product-widget:hover {
+              transform: translateY(-3px);
+              box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+          }
+
+      .product-img img {
+          border-radius: 6px;
+          margin-right: 10px;
+          width: 80px;
+          height: auto;
+          object-fit: cover;
+      }
+
+      .product-body {
+          flex: 1;
+      }
+
+      .product-name a {
+          color: #333;
+          font-weight: 600;
+          text-decoration: none;
+      }
+
+          .product-name a:hover {
+              color: #d91b1b; /* nice red highlight */
+          }
+
+      .product-price {
+          color: #111;
+          font-weight: 700;
+          font-size: 15px;
+      }
+</style>
 <body class="">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
     <div class="container-fluid">
@@ -52,7 +103,7 @@
                 <img class="logo_sam" style="margin-top:20px" src="~/img/logo_samtech.png" />
 
             </div>
-            <div class="col-lg-9 col-md-9 col-sm-12 col-12  align-content-center text-center" style="background-color:#d10024;height: 15%">
+            <div class="col-lg-9 col-md-9 col-sm-12 col-12  align-content-center text-center custome-height" style="background-color:#d10024">
             </div>
         </div><div class="row">
             <div class="col-md-3 d-none d-md-block align-content-center text-center hide-small">
@@ -70,7 +121,7 @@
                     <a href="/item-groups"> <button class="add-to-cart-btn-home " style="margin-top:20px"> <i class="fab fa-opencart"></i> Browse All </button></a>
                 </div>
             </div>
-            <div class="col-12 col-lg-9 col-md-9 col-sm-12  align-content-center text-center" style="background-color:#d10024;height:100%;display:flex; flex-direction:column;align-items:center;align-content:first baseline baseline;padding-top:10px">
+            <div class="col-12 col-lg-9 col-md-9 col-sm-12  align-content-center text-center" style="background-color:#d10024;height:100%">
               
                 @* <h2 class="text-white" style="color:white">Samtech Solutions | Your One-Stop Electronics Hub</h2> *@
                
@@ -98,19 +149,63 @@
 
 
                 <div class="row">
-                    <div class="col-md-6 text-left">
-                        <div class="input-group text-left p-lg-5" style="margin:15px; width:450px">
-                            <input type="text" class="form-control " style="border-top-left-radius:20px;border-bottom-left-radius:20px" placeholder="Search by item name" aria-label="Amount (rounded to the nearest dollar)">
-                            <span class="input-group-btn">
-                                <button class="btn btn-primary" style="border-top-right-radius:20px; background-color:#d10024; border-bottom-right-radius:20px;border:1px solid white;" type="button">Search</button>
-                            </span>
-                        </div>dd
-                        <h3 class="text-white mt-4" style="color:white;margin-top:40px">@Model.Value("bodyTitle")</h3>
-                        <h4 class="text-white mt-4" style="color:white;margin-top:20px">@Model.Value("bodyDescription")</h4>
+                    <div class="col-md-6 custome-margin d-flex flex-column justify-content-center align-items-center text-center;">
+
+                     
+
+                        <div class="input-group mb-4 d" style="max-width: 500px; margin: 0 auto;">
+                          
+                          
+                        </div>
+
+                        <h3 class="text-white mt-4" style="margin-top:30px">@Model.Value("bodyTitle")</h3>
+                      
+                        <h4 class="text-white mt-4" style="margin-top:30px; margin-bottom:25px">@Model.Value("bodyDescription")</h4>
+                        <table style="margin: 0 auto;margin-bottom:15px">
+                            <!-- Centers the table -->
+                            <tr class="input-group mb-4 d-flex">
+                                <td>
+                                    <input type="text"
+                                           class="form-control"
+                                           style="border-top-left-radius:20px; border-bottom-left-radius:20px;"
+                                           placeholder="Search by item name"
+                                           aria-label="Search by item name" oninput="searchItems(this.value)" />
+                                </td>
+                                <td>
+                                    <button class="btn btn-primary" onclick="searchItems(document.getElementById('item-search').value)"
+                                            style="border-top-right-radius:20px; border-bottom-right-radius:20px; background-color:#d10024; border:1px solid white;">
+                                        Search
+                                    </button>
+                                </td>
+                            </tr>
+                        </table>
+                       @*  <table style="margin: 0 auto;">
+                            <tr class="input-group mb-4 d-flex">
+                                <td>
+                                    <input type="text"
+                                           id="item-search"
+                                           class="form-control"
+                                           placeholder="Search by item name"
+                                           oninput="searchItems(this.value)" />
+                                </td>
+                                <td>
+                                    <button class="btn btn-primary"
+                                            style="border-top-right-radius:20px; border-bottom-right-radius:20px; background-color:#d10024; border:1px solid white;"
+                                            onclick="searchItems(document.getElementById('item-search').value)">
+                                        Search
+                                    </button>
+                                </td>
+                            </tr>
+                        </table> *@
+
+                        <!-- Container for search suggestions -->
+                        <div id="search-results" class="mt-3"></div>
+
                     </div>
 
                     <div class="col-md-6">
-                       
+                        <img src="~/img/maps.png" class="maps" />
+
                     </div>
 
 
@@ -119,7 +214,7 @@
                
                   
                 <div>
-                    <h3 style="color:white">Popular Categories</h3>
+                    <h3 style="color:white;margin-top:30px">Popular Categories</h3>
 
                 </div>
 
@@ -157,10 +252,9 @@
         </div>
     </div>
 </body>
-    }
-}
+   
 
-<
+
 <script src="/js/jquery.min.js"></script>
 <script src="/js/bootstrap.min.js"></script>
 <script src="/js/slick.min.js"></script>
@@ -168,3 +262,84 @@
 <script src="/js/jquery.zoom.min.js"></script>
 <script src="/js/main.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/js/all.min.js"></script>
+<script>
+      function searchItems(query) {
+        const resultsContainer = document.getElementById("search-results");
+
+        // Trim and validate
+        query = query.trim();
+        if (!query) {
+            resultsContainer.innerHTML = "";
+            return;
+        }
+
+        // Show loading message
+        resultsContainer.innerHTML = `
+            <p class='text-muted px-3 py-2 m-0 text-center bg-light rounded shadow-sm'>
+                Searching...
+            </p>`;
+
+        // Fetch from Umbraco Surface Controller
+        fetch(`/umbraco/surface/Leads/Search?term=${encodeURIComponent(query)}`)
+            .then(res => res.json())
+            .then(data => {
+                resultsContainer.innerHTML = "";
+
+                if (!data || data.length === 0) {
+                    resultsContainer.innerHTML = `
+                        <p class='text-muted px-3 py-2 m-0 text-center bg-white rounded shadow-sm'>
+                            No results found
+                        </p>`;
+                    return;
+                }
+
+                // Render results beautifully
+                data.forEach(item => {
+                    const card = document.createElement("div");
+                    card.className = "product-widget bg-white rounded shadow-sm p-2 d-flex align-items-center mb-2";
+                    card.style.transition = "all 0.2s ease-in-out";
+                    card.style.cursor = "pointer";
+
+                    card.innerHTML = `
+                        <div class="product-img me-3" style="flex-shrink: 0;">
+                            <img src="${item.image || '/img/default.png'}"
+                                 alt="${item.name}"
+                                 style="width:80px; height:80px; object-fit:cover; border-radius:10px;">
+                        </div>
+                        <div class="product-body flex-grow-1">
+                            <h3 class="product-name mb-1" style="font-size:15px; font-weight:600; color:#333;">
+                                <a target="_blank" href="${item.link}" style="text-decoration:none; color:#d10024;">
+                                    ${item.name}
+                                </a>
+                            </h3>
+                            <h4 class="product-price mb-0" style="font-size:14px; color:#444;">
+                                Ksh.${item.actualPrice}.00
+                                <del class="product-old-price text-muted small">Ksh.${item.initialPrice}.00</del>
+                            </h4>
+                        </div>
+                    `;
+
+                    // Hover animation
+                    card.addEventListener("mouseenter", () => {
+                        card.style.transform = "scale(1.02)";
+                        card.style.boxShadow = "0 4px 10px rgba(0,0,0,0.1)";
+                    });
+                    card.addEventListener("mouseleave", () => {
+                        card.style.transform = "scale(1)";
+                        card.style.boxShadow = "0 2px 5px rgba(0,0,0,0.05)";
+                    });
+
+                    resultsContainer.appendChild(card);
+                });
+            })
+            .catch(err => {
+                console.error("Search error:", err);
+                resultsContainer.innerHTML = `
+                    <p class='text-danger px-3 py-2 m-0 text-center bg-white rounded shadow-sm'>
+                        Error loading results
+                    </p>`;
+            });
+    }
+
+
+</script>

@@ -1999,7 +1999,7 @@ textarea.input {
   width: 160px;
   height: 40px;
   font-weight: 700;
-  background: #D10024;
+  background: green;
   color: #FFF;
   border: none;
   border-radius: 0px 40px 40px 0px;
@@ -2292,4 +2292,50 @@ textarea.input {
 .image-sides{
     height:250px;
     margin-right:15px
+}
+
+.maps{
+    height:450px
+}
+
+.custome-padding{
+
+
+}
+
+ 
+@media (min-width: 576px) {
+
+
+}
+
+
+@media (min-width: 768px) {
+
+}
+
+@media (min-width: 992px) {
+
+}
+
+@media (min-width: 1200px) {
+
+
+}
+
+@media (min-width: 1400px) {
+
+    .custome-margin{
+        margin-top:100px
+
+    }
+}
+.custome-height {
+    background-color:#d10024;
+    height:100px
+}
+
+/*# sourceMappingURL=index.css.map */
+.custome-shaddow {
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
 }

@@ -312,6 +312,53 @@ function openLoyaltyAccountForm(email = '',phoneNumber,) {
     });
 }
 
+function createLoyalAccount(orderId, whatsapp, points, numOrders, lastDate, createdBy) {
+
+    const formData = new FormData();
+
+    // Append parameters to FormData
+    formData.append("OrderId", orderId);
+    formData.append("WhatAppNumber", whatsapp);
+    formData.append("Points", points);
+    formData.append("NumOrders", numOrders);
+    formData.append("LastDate", lastDate);
+    formData.append("CreatedBy", createdBy);
+    fetch('/umbraco/surface/Leads/CreateAccount', {
+        method: 'POST',
+        body: formData,
+        headers: { 'Accept': 'application/json' }
+    })
+        .then(res => {
+            if (!res.ok) throw new Error("Network error");
+            return res.json();
+        })
+        .then(data => {
+            if (data.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Account Created',
+                    text: data.message || 'Loyalty account has been created successfully!',
+                    timer: 2000,
+                    showConfirmButton: false
+                }).then(() => location.reload());
+            } else {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Failed',
+                    text: data.message || 'Something went wrong, please try again.'
+                });
+            }
+        })
+        .catch(error => {
+            console.error("Error creating loyalty account:", error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops!',
+                text: 'Failed to create loyalty account. Check console for details.'
+            });
+        });
+}
+
 function submitLoyaltyAccount(data) {
     console.log("Points Eraned:"+data.points)
     const formData = new FormData();
@@ -662,3 +709,6 @@ document.addEventListener("DOMContentLoaded", () => {
 function createAccount() {
     alert("Redirect or open modal to create new account");
 }
+
+
+
